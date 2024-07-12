@@ -1,0 +1,16 @@
+{
+  "name": "my-tcp-node",
+  "version": "0.0.2",
+  "scripts": {
+    "start": "node-red"
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "node-red": {
+    "nodes": {
+      "send-buffer-node": "send-buffer-node.js"
+    }
+  },
+  "dependencies": {}
+}
