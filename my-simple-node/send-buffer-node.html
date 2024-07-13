@@ -22,21 +22,8 @@
             $('#node-input-interval').val(this.interval);
             $('#node-input-close-after-send').prop('checked', this.closeAfterSend);
         },
-        oneditcancel: function() {
-        },
-        oneditdelete: function() {
-        },
-        oneditprepare: function() {
-            $('#node-input-name').val(this.name);
-            $('#node-input-url').val(this.url);
-            $('#node-input-buffer').val(this.buffer);
-            $('#node-input-interval').val(this.interval);
-            $('#node-input-close-after-send').prop('checked', this.closeAfterSend);
-        },
-        oneditcancel: function() {
-        },
-        oneditdelete: function() {
-        },
+        oneditcancel: function() {},
+        oneditdelete: function() {},
         oneditsave: function() {
             this.name = $('#node-input-name').val();
             this.url = $('#node-input-url').val();

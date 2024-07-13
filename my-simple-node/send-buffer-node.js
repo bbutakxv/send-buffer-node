@@ -12,8 +12,34 @@ module.exports = function(RED) {
         let client;
         let intervalID;
 
+        function connectAndSend() {
+            const [host, port] = node.url.split(':');
+            client = new net.Socket();
+
+            client.connect(port, host, function() {
+                client.write(Buffer.from(node.buffer), function() {
+                    if (node.closeAfterSend) {
+                        client.end();
+                    }
+                });
+            });
+
+            client.on('data', function(data) {
+                node.send({ payload: data.toString() });
+            });
+
+            client.on('error', function(error) {
+                node.error(error);
+                client.destroy();
+            });
+
+            client.on('close', function() {});
+        }
+
         function sendBuffer() {
             if (node.closeAfterSend) {
+                connectAndSend();
+            } else {
                 if (!client || client.destroyed) {
                     const [host, port] = node.url.split(':');
                     client = new net.Socket();
@@ -33,24 +59,6 @@ module.exports = function(RED) {
                 } else {
                     node.warn("Нет активного соединения для отправки данных.");
                 }
-            } else {
-                const [host, port] = node.url.split(':');
-                const client = new net.Socket();
-
-                client.connect(port, host, function() {
-                    client.write(Buffer.from(node.buffer));
-                });
-
-                client.on('data', function(data) {
-                    node.send({ payload: data.toString() });
-                });
-
-                client.on('error', function(error) {
-                    node.error(error);
-                    client.destroy();
-                });
-
-                client.on('close', function() {});
             }
         }
 
@@ -66,7 +74,7 @@ module.exports = function(RED) {
 
         node.on('close', function() {
             clearInterval(intervalID);
-            if (!node.closeAfterSend && client) {
+            if (client) {
                 client.destroy();
             }
         });
